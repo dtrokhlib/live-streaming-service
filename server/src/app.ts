@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Application } from 'express';
 import path from 'path';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
@@ -6,25 +6,46 @@ import { createClient } from 'redis';
 import cookieParser from 'cookie-parser';
 import flash from 'connect-flash';
 
+import 'reflect-metadata';
+import UserController from './user/User.controller';
+import { inject, injectable } from 'inversify';
+import { TYPES } from './types';
+import { bindRoutes } from './utils/bind-routes';
+
 export const RedisStore = connectRedis(session);
 export const redisClient = createClient();
 
+@injectable()
 export class App {
-    app: Express;
+    private readonly _instance: Application;
 
-    constructor() {
-        this.app = express();
+    get instance(): Application {
+        return this._instance;
     }
 
-    set() {
-        this.app.set('view engine', 'ejs');
-        this.app.set('views', path.join(__dirname, './views'));
+    constructor(
+        @inject(TYPES.UserController) private userController: UserController
+    ) {
+        this._instance = express();
+        this.appSet();
+        this.appUse();
+        this.useRoutes();
     }
 
-    async use() {
+    private appSet() {
+        this._instance.set('view engine', 'ejs');
+        this._instance.set('views', path.join(__dirname, './views'));
+    }
+
+    private useRoutes() {
+        const userRouter = bindRoutes(this.userController, UserController);
+        this._instance.use(userRouter.basePath, userRouter.router);
+    }
+
+    private async appUse() {
         await redisClient.connect();
 
-        this.app.use(
+        this._instance.use(
             session({
                 store: new RedisStore({ client: redisClient }),
                 secret: process.env.SESSION_SECRET!,
@@ -37,16 +58,10 @@ export class App {
                 },
             })
         );
-        this.app.use(cookieParser());
-        this.app.use(express.static('public'));
-        this.app.use(flash());
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: true }));
-    }
-
-    buildAndGetApp() {
-        this.set();
-        this.use();
-        return this.app;
+        this._instance.use(cookieParser());
+        this._instance.use(express.static('public'));
+        this._instance.use(flash());
+        this._instance.use(express.json());
+        this._instance.use(express.urlencoded({ extended: true }));
     }
 }
