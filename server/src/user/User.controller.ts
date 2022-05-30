@@ -7,6 +7,8 @@ import { BaseController } from '../common/Base.controller';
 import { inject } from 'inversify';
 import { TYPES } from '../types';
 import { UserService } from './User.service';
+import { ObjectIdValidationMiddleware } from '../middlewares/object-id-validation.middleware';
+import { BodyValidationMiddleware } from '../middlewares/body-validation.middleware';
 
 @Controller('/user')
 export default class UserController extends BaseController {
@@ -15,12 +17,20 @@ export default class UserController extends BaseController {
     }
 
     @Get('/')
-    getUser(req: Request, res: Response) {
+    async getUsers(req: Request, res: Response) {
+        res.send(await this.userService.findUsers());
+    }
+
+    @Get('/:id', [new ObjectIdValidationMiddleware()])
+    getSingleUser(req: Request, res: Response) {
         res.send('Get User');
     }
 
-    @Post('/')
-    postUser(req: Request, res: Response) {
+    // body validation create with class validation
+    @Post('/', [
+        new BodyValidationMiddleware(['email', 'username', 'password']),
+    ])
+    createUser(req: Request, res: Response) {
         res.send('Post User');
     }
 
@@ -30,7 +40,7 @@ export default class UserController extends BaseController {
     }
 
     @Put('/')
-    putUser(req: Request, res: Response) {
+    updateUser(req: Request, res: Response) {
         res.send('Put User');
     }
 }

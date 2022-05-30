@@ -11,6 +11,7 @@ import UserController from './user/User.controller';
 import { inject, injectable } from 'inversify';
 import { TYPES } from './types';
 import { bindRoutes } from './utils/bind-routes';
+import bodyParser from 'body-parser';
 
 export const RedisStore = connectRedis(session);
 export const redisClient = createClient();
@@ -29,7 +30,6 @@ export class App {
         this._instance = express();
         this.appSet();
         this.appUse();
-        this.useRoutes();
     }
 
     private appSet() {
@@ -44,7 +44,6 @@ export class App {
 
     private async appUse() {
         await redisClient.connect();
-
         this._instance.use(
             session({
                 store: new RedisStore({ client: redisClient }),
@@ -61,7 +60,9 @@ export class App {
         this._instance.use(cookieParser());
         this._instance.use(express.static('public'));
         this._instance.use(flash());
-        this._instance.use(express.json());
-        this._instance.use(express.urlencoded({ extended: true }));
+        this._instance.use(bodyParser.json());
+        this._instance.use(bodyParser.urlencoded({ extended: true }));
+
+        await this.useRoutes();
     }
 }
