@@ -28,8 +28,6 @@ export class App {
         @inject(TYPES.UserController) private userController: UserController
     ) {
         this._instance = express();
-        this.appSet();
-        this.appUse();
     }
 
     private appSet() {
@@ -62,7 +60,11 @@ export class App {
         this._instance.use(flash());
         this._instance.use(bodyParser.json());
         this._instance.use(bodyParser.urlencoded({ extended: true }));
+    }
 
+    public async init() {
+        await this.appSet();
+        await this.appUse();
         await this.useRoutes();
     }
 }

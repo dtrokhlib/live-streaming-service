@@ -5,6 +5,7 @@ import { TYPES } from './types';
 import UserController from './user/User.controller';
 import { Container, ContainerModule, interfaces } from 'inversify';
 import { UserService } from './user/User.service';
+import { connect } from 'mongoose';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<UserController>(TYPES.UserController).to(UserController);
@@ -16,8 +17,11 @@ const bootstrap = async () => {
     const appContainer = new Container();
     appContainer.load(appBindings);
     const app = appContainer.get<App>(TYPES.Application);
-    const server = new Server(app.instance);
 
+    await connect(process.env.MONGODB_URL!);
+    await app.init();
+
+    const server = new Server(app.instance);
     server.listen(process.env.PORT, () => {
         console.log(`Server has started on port: ${process.env.PORT}`);
     });

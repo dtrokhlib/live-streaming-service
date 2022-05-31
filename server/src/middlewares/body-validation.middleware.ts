@@ -1,30 +1,21 @@
+import { validateOrReject } from 'class-validator';
 import { Request, Response, NextFunction } from 'express';
 import { IMiddleware } from '../utils/interfaces/middleware.interface';
 
-export class BodyValidationMiddleware implements IMiddleware {
-    private validateFields: string[];
+export class BodyValidation implements IMiddleware {
+    private classValidator: any;
 
-    constructor(validateFields: string[]) {
-        this.validateFields = validateFields;
+    constructor(classValidator: any) {
+        this.classValidator = new classValidator();
     }
 
-    execute(req: Request, res: Response, next: NextFunction) {
-        console.log(req.body);
-        const missedFields: string[] = [];
-        this.validateFields.forEach((field) => {
-            if (!req.body[field]) {
-                missedFields.push(field);
-            }
-        });
-
-        if (missedFields.length) {
-            return res
-                .status(404)
-                .send(
-                    `Fields should be specified in the request body: ${missedFields.toString()}`
-                );
+    async execute(req: Request, res: Response, next: NextFunction) {
+        Object.assign(this.classValidator, req.body);
+        try {
+            await validateOrReject(this.classValidator);
+        } catch(err) {
+            return res.status(400).send(err)
         }
-
         next();
     }
 }

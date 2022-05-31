@@ -22,7 +22,7 @@ userSchema.pre('save', async function (next) {
     try {
         const hashPassword = await hash(
             this.password,
-            process.env.SALT_ROUNDS!
+            Number(process.env.SALT_ROUNDS!)
         );
         user.password = hashPassword;
         next();

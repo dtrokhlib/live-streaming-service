@@ -7,8 +7,9 @@ import { BaseController } from '../common/Base.controller';
 import { inject } from 'inversify';
 import { TYPES } from '../types';
 import { UserService } from './User.service';
-import { ObjectIdValidationMiddleware } from '../middlewares/object-id-validation.middleware';
-import { BodyValidationMiddleware } from '../middlewares/body-validation.middleware';
+import { ObjectIdValidation } from '../middlewares/object-id-validation.middleware';
+import { BodyValidation } from '../middlewares/body-validation.middleware';
+import { UserDto } from './dto/user-create.dto';
 
 @Controller('/user')
 export default class UserController extends BaseController {
@@ -21,25 +22,30 @@ export default class UserController extends BaseController {
         res.send(await this.userService.findUsers());
     }
 
-    @Get('/:id', [new ObjectIdValidationMiddleware()])
-    getSingleUser(req: Request, res: Response) {
-        res.send('Get User');
+    @Post('/', [new BodyValidation(UserDto)])
+    async createUser(req: Request, res: Response) {
+        const oldUser = await this.userService.findUserByParam({
+            email: req.body.email,
+        });
+        if (oldUser) {
+           return res.status(400).send('Email already in use');
+        }
+
+        const newUser = await this.userService.createUser(req.body);
+        res.status(201).send(newUser);
     }
 
-    // body validation create with class validation
-    @Post('/', [
-        new BodyValidationMiddleware(['email', 'username', 'password']),
-    ])
-    createUser(req: Request, res: Response) {
-        res.send('Post User');
+    @Get('/:id', [new ObjectIdValidation()])
+    async getSingleUser(req: Request, res: Response) {
+        res.send(await this.userService.findUserById(req.params.id));
     }
 
-    @Delete('/')
+    @Delete('/:id', [new ObjectIdValidation()])
     deleteUser(req: Request, res: Response) {
         res.send('Delete User');
     }
 
-    @Put('/')
+    @Put('/:id', [new ObjectIdValidation()])
     updateUser(req: Request, res: Response) {
         res.send('Put User');
     }

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { isValidObjectId } from 'mongoose';
 import { IMiddleware } from '../utils/interfaces/middleware.interface';
 
-export class ObjectIdValidationMiddleware implements IMiddleware {
+export class ObjectIdValidation implements IMiddleware {
     execute(req: Request, res: Response, next: NextFunction) {
         if (!req.params.id) {
             return next();
@@ -10,8 +10,8 @@ export class ObjectIdValidationMiddleware implements IMiddleware {
 
         if (!isValidObjectId(req.params.id)) {
             return res
-                .status(404)
-                .send(`Invalid Object Id provided to the request path}`);
+                .status(400)
+                .send(`Invalid Object Id provided as url parameter`);
         }
         next();
     }
