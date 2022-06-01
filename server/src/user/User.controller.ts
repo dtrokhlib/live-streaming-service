@@ -28,7 +28,7 @@ export default class UserController extends BaseController {
             email: req.body.email,
         });
         if (oldUser) {
-           return res.status(400).send('Email already in use');
+            return res.status(400).send('Email already in use');
         }
 
         const newUser = await this.userService.createUser(req.body);
@@ -41,12 +41,22 @@ export default class UserController extends BaseController {
     }
 
     @Delete('/:id', [new ObjectIdValidation()])
-    deleteUser(req: Request, res: Response) {
-        res.send('Delete User');
+    async deleteUser(req: Request, res: Response) {
+        const deletedUser = await this.userService.deleteUser(req.params.id);
+        if (!deletedUser) {
+            return res.status(404).send('User with this ID is not found');
+        }
+
+        res.status(204).send();
     }
 
     @Put('/:id', [new ObjectIdValidation()])
-    updateUser(req: Request, res: Response) {
-        res.send('Put User');
+    async updateUser(req: Request, res: Response) {
+        const user = await this.userService.updateUser(req.params.id, req.body);
+        if (!user) {
+            return res.status(404).send('User with this ID is not found');
+        }
+
+        res.send(user);
     }
 }

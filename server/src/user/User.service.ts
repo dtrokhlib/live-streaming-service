@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { ObjectId } from 'mongoose';
 import { UserDto } from './dto/user-create.dto';
-import { IUserDocument } from './interfaces/user.interface';
+import { IUser, IUserDocument } from './interfaces/user.interface';
 import { User } from './User.model';
 
 @injectable()
@@ -23,5 +23,13 @@ export class UserService {
         await newUser.save();
 
         return newUser;
+    }
+
+    async deleteUser(id: string): Promise<IUserDocument | null> {
+        return await User.findByIdAndDelete(id);
+    }
+
+    async updateUser(id: string, data: any): Promise<IUserDocument | null> {
+        return await User.findByIdAndUpdate(id, { ...data });
     }
 }

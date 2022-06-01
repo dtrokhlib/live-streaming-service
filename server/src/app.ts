@@ -12,6 +12,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from './types';
 import { bindRoutes } from './utils/bind-routes';
 import bodyParser from 'body-parser';
+import { AuthController } from './auth/Auth.controller';
 
 export const RedisStore = connectRedis(session);
 export const redisClient = createClient();
@@ -25,7 +26,8 @@ export class App {
     }
 
     constructor(
-        @inject(TYPES.UserController) private userController: UserController
+        @inject(TYPES.UserController) private userController: UserController,
+        @inject(TYPES.AuthController) private authController: AuthController
     ) {
         this._instance = express();
     }
@@ -37,7 +39,10 @@ export class App {
 
     private useRoutes() {
         const userRouter = bindRoutes(this.userController, UserController);
+        const authRouter = bindRoutes(this.authController, AuthController);
+
         this._instance.use(userRouter.basePath, userRouter.router);
+        this._instance.use(authRouter.basePath, authRouter.router);
     }
 
     private async appUse() {

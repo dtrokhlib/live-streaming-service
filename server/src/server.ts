@@ -6,10 +6,14 @@ import UserController from './user/User.controller';
 import { Container, ContainerModule, interfaces } from 'inversify';
 import { UserService } from './user/User.service';
 import { connect } from 'mongoose';
+import { AuthController } from './auth/Auth.controller';
+import { AuthService } from './auth/Auth.service';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<UserController>(TYPES.UserController).to(UserController);
     bind<UserService>(TYPES.UserService).to(UserService);
+    bind<AuthController>(TYPES.AuthController).to(AuthController);
+    bind<AuthService>(TYPES.AuthService).to(AuthService);
     bind<App>(TYPES.Application).to(App).inSingletonScope();
 });
 

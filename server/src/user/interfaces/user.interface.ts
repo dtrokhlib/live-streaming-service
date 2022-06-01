@@ -11,6 +11,7 @@ export interface IUserDocument extends Document {
     email: string;
     password: string;
     verifyPassword: (password: string) => boolean;
+    generateToken: () => string;
 }
 
 export interface IUserModel extends Model<IUserDocument> {
