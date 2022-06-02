@@ -1,0 +1,23 @@
+.Login {
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    background-color: #a5d6ff;
+    padding: 25px 20px;
+    border-radius: 15px;
+    color: #051d4d;
+    border: 2px solid #271052;
+}
+
+.Logo {
+    text-align: center;
+    padding: 20px;
+}
+
+.button-block {
+    text-align: center;
+}
+
+.btn-login {
+    padding: 5px 50px;
+}

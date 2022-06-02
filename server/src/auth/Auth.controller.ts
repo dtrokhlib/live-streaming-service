@@ -10,6 +10,11 @@ import { Request, Response } from 'express';
 import { AuthService } from './Auth.service';
 import { authorizationPath } from './Auth.constants';
 import { UserLoginDto } from '../user/dto/user-login.dto';
+import {
+    emailAlreadyInUseError,
+    gitHubUserCodeError,
+    invalidCredentialsError,
+} from '../errors/errors.constants';
 
 @Controller('/auth')
 export class AuthController extends BaseController {
@@ -26,11 +31,11 @@ export class AuthController extends BaseController {
             email: req.body.email,
         });
         if (!user) {
-            return res.status(400).send('Provided credentials are not valid');
+            return res.status(400).send(invalidCredentialsError);
         }
         const validPass = await user.verifyPassword(req.body.password);
         if (!validPass) {
-            return res.status(400).send('Provided credentials are not valid');
+            return res.status(400).send(invalidCredentialsError);
         }
 
         req.session.user = user;
@@ -43,10 +48,12 @@ export class AuthController extends BaseController {
             email: req.body.email,
         });
         if (oldUser) {
-            return res.status(400).send('Email already in use');
+            return res.status(400).send(emailAlreadyInUseError);
         }
 
         const newUser = await this.userService.createUser(req.body);
+
+        req.session.user = newUser;
         res.status(201).send(newUser);
     }
 
@@ -59,20 +66,23 @@ export class AuthController extends BaseController {
         res.redirect('/');
     }
 
+    // To be completed and moved to different controller
     @Get('/github')
     async authGithubFlow(req: Request, res: Response) {
         res.redirect(`${authorizationPath}?client_id=${process.env.CLIENT_ID}`);
     }
 
+    // To be completed and moved to different controller
     @Get('/oauth-github')
     async oauthGithub(req: Request, res: Response) {
         if (!req.query.code) {
-            return res.status(500).send('GitHub User Code was not provided');
+            return res.status(500).send(gitHubUserCodeError);
         }
         const token = await this.authService.accessTokenRequest(
             String(req.query.code)
         );
         const userProfile = await this.authService.gitHubProfileRequest(token);
+
         res.send(userProfile);
     }
 }

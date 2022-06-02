@@ -13,9 +13,12 @@ import { TYPES } from './types';
 import { bindRoutes } from './utils/bind-routes';
 import bodyParser from 'body-parser';
 import { AuthController } from './auth/Auth.controller';
+import cors from 'cors';
 
 export const RedisStore = connectRedis(session);
-export const redisClient = createClient();
+export const redisClient = createClient({
+    url: 'redis://localhost:6379',
+});
 
 @injectable()
 export class App {
@@ -47,6 +50,7 @@ export class App {
 
     private async appUse() {
         await redisClient.connect();
+        this._instance.use(cors());
         this._instance.use(
             session({
                 store: new RedisStore({ client: redisClient }),
