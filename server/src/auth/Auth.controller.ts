@@ -8,9 +8,8 @@ import Controller from '../utils/decorators/controller.decorator';
 import { Get, Post } from '../utils/decorators/handlers.decorator';
 import { Request, Response } from 'express';
 import { AuthService } from './Auth.service';
-import { GitHubAccessTokenUrl } from './Auth.constants';
-import axios from 'axios';
-import { gitHubUserProfile } from './interfaces/user-profile.interface';
+import { authorizationPath } from './Auth.constants';
+import { UserLoginDto } from '../user/dto/user-login.dto';
 
 @Controller('/auth')
 export class AuthController extends BaseController {
@@ -21,8 +20,22 @@ export class AuthController extends BaseController {
         super();
     }
 
-    @Post('/login', [new BodyValidation(UserDto)])
-    async login(req: Request, res: Response) {}
+    @Post('/login', [new BodyValidation(UserLoginDto)])
+    async login(req: Request, res: Response) {
+        const user = await this.userService.findUserByParam({
+            email: req.body.email,
+        });
+        if (!user) {
+            return res.status(400).send('Provided credentials are not valid');
+        }
+        const validPass = await user.verifyPassword(req.body.password);
+        if (!validPass) {
+            return res.status(400).send('Provided credentials are not valid');
+        }
+
+        req.session.user = user;
+        res.send(user);
+    }
 
     @Post('/register', [new BodyValidation(UserDto)])
     async register(req: Request, res: Response) {
@@ -38,17 +51,28 @@ export class AuthController extends BaseController {
     }
 
     @Post('/logout')
-    async logout(req: Request, res: Response) {}
-
-    @Get('/oauth-callback')
-    async oauth(req: Request, res: Response) {
-        const url = GitHubAccessTokenUrl + req.query.code;
-        const token = String(await this.authService.accessTokenRequest(url));
-        const userProfile = await this.authService.gitHubProfileRequest(token);
-
-        res.send({
-            userProfileLogin: userProfile.login,
-            userProfileEmail: userProfile.email,
+    async logout(req: Request, res: Response) {
+        req.session.destroy((err) => {
+            console.log(err);
         });
+
+        res.redirect('/');
+    }
+
+    @Get('/github')
+    async authGithubFlow(req: Request, res: Response) {
+        res.redirect(`${authorizationPath}?client_id=${process.env.CLIENT_ID}`);
+    }
+
+    @Get('/oauth-github')
+    async oauthGithub(req: Request, res: Response) {
+        if (!req.query.code) {
+            return res.status(500).send('GitHub User Code was not provided');
+        }
+        const token = await this.authService.accessTokenRequest(
+            String(req.query.code)
+        );
+        const userProfile = await this.authService.gitHubProfileRequest(token);
+        res.send(userProfile);
     }
 }
