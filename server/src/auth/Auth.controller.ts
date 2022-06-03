@@ -27,18 +27,20 @@ export class AuthController extends BaseController {
 
     @Post('/login', [new BodyValidation(UserLoginDto)])
     async login(req: Request, res: Response) {
+        console.log(req.body, '111');
         const user = await this.userService.findUserByParam({
             email: req.body.email,
         });
+
         if (!user) {
-            return res.status(400).send(invalidCredentialsError);
+            return res.status(400).send({ message: invalidCredentialsError });
         }
         const validPass = await user.verifyPassword(req.body.password);
         if (!validPass) {
             return res.status(400).send(invalidCredentialsError);
         }
-
-        req.session.user = user;
+        console.log(user);
+        req.session.user = user.email;
         res.send(user);
     }
 
@@ -53,7 +55,7 @@ export class AuthController extends BaseController {
 
         const newUser = await this.userService.createUser(req.body);
 
-        req.session.user = newUser;
+        req.session.user = newUser.email;
         res.status(201).send(newUser);
     }
 

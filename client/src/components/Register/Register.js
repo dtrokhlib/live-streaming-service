@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
-import './Login.css';
+import './Register.css';
 import axios from 'axios';
 
-function Login({ switchAuthState }) {
+function Register({ switchAuthState }) {
     const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     async function localLogin(e) {
-        console.log('clicked', email.value, password.value);
 
         const userData = {
             email: email.value,
+            username: username.value,
             password: password.value,
         };
 
         const data = await axios.post(
-            'http://127.0.0.1:5050/auth/register',
+            'http://127.0.0.1:5050/auth/login',
             userData
         );
-        console.log(data);
 
         const parsedData = await data.json();
-
         console.log(parsedData);
     }
 
@@ -35,7 +34,17 @@ function Login({ switchAuthState }) {
                     }}
                     type='email'
                     className='form-control'
-                    id='exampleInputEmail1'
+                    aria-describedby='emailHelp'
+                />
+            </div>
+            <div className='mb-3'>
+                <label className='form-label'>Username</label>
+                <input
+                    ref={(value) => {
+                        setUsername(value);
+                    }}
+                    type='text'
+                    className='form-control'
                     aria-describedby='emailHelp'
                 />
             </div>
@@ -48,7 +57,6 @@ function Login({ switchAuthState }) {
                     type='password'
                     autoComplete='true'
                     className='form-control'
-                    id='exampleInputPassword1'
                 />
             </div>
             <div className='mb-3 button-block'>
@@ -56,21 +64,21 @@ function Login({ switchAuthState }) {
                     onClick={localLogin}
                     className='btn btn-light btn-login'
                 >
-                    Login
+                    Register
                 </button>
             </div>
             <div className='mb-3 button-block'>
-                Does not have an account?
+                Have an account?
                 <button
-                    onClick={switchAuthState}
                     type='button'
+                    onClick={switchAuthState}
                     className='btn btn-link'
                 >
-                    Register
+                    Login
                 </button>
             </div>
         </form>
     );
 }
 
-export default Login;
+export default Register;

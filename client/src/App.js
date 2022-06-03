@@ -1,13 +1,13 @@
 import './App.css';
 import Header from './components/Header/Header';
-import Login from './components/login/Login';
+import Auth from './components/Auth/Auth';
 
 function App() {
     return (
         <div className='App'>
             <Header />
             <main>
-                <Login />
+                <Auth />
             </main>
         </div>
     );

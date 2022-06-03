@@ -15,9 +15,9 @@ import bodyParser from 'body-parser';
 import { AuthController } from './auth/Auth.controller';
 import cors from 'cors';
 
-export const RedisStore = connectRedis(session);
-export const redisClient = createClient({
-    url: 'redis://localhost:6379',
+const RedisStore = connectRedis(session);
+const redisClient = createClient({
+    url: 'redis://127.0.0.1:6379',
 });
 
 @injectable()
@@ -51,24 +51,24 @@ export class App {
     private async appUse() {
         await redisClient.connect();
         this._instance.use(cors());
-        this._instance.use(
-            session({
-                store: new RedisStore({ client: redisClient }),
-                secret: process.env.SESSION_SECRET!,
-                resave: false,
-                saveUninitialized: false,
-                cookie: {
-                    secure: false,
-                    httpOnly: false,
-                    maxAge: 1000 * 60 * 10,
-                },
-            })
-        );
         this._instance.use(cookieParser());
         this._instance.use(express.static('public'));
         this._instance.use(flash());
         this._instance.use(bodyParser.json());
         this._instance.use(bodyParser.urlencoded({ extended: true }));
+        this._instance.use(
+            session({
+                store: new RedisStore({ client: redisClient }),
+                secret:'adasdad',
+                resave: false,
+                saveUninitialized: false,
+                cookie: {
+                    secure: false,
+                    httpOnly: false,
+                    maxAge: 600000,
+                },
+            })
+        );
     }
 
     public async init() {
