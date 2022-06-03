@@ -20,6 +20,10 @@ const redisClient = createClient({
     url: 'redis://127.0.0.1:6379',
 });
 
+redisClient.on('error', function (err) {
+    console.log('Redis Error :' + err);
+});
+
 @injectable()
 export class App {
     private readonly _instance: Application;
@@ -58,13 +62,12 @@ export class App {
         this._instance.use(bodyParser.urlencoded({ extended: true }));
         this._instance.use(
             session({
-                store: new RedisStore({ client: redisClient }),
-                secret:'adasdad',
+                secret: process.env.SESSION_SECRET!,
                 resave: false,
                 saveUninitialized: false,
                 cookie: {
                     secure: false,
-                    httpOnly: false,
+                    httpOnly: true,
                     maxAge: 600000,
                 },
             })

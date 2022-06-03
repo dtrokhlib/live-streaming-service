@@ -10,7 +10,10 @@ import { UserService } from './User.service';
 import { ObjectIdValidation } from '../middlewares/object-id-validation.middleware';
 import { BodyValidation } from '../middlewares/body-validation.middleware';
 import { UserDto } from './dto/user-create.dto';
-import { emailAlreadyInUseError, userNotFoundError } from '../errors/errors.constants';
+import {
+    emailAlreadyInUseError,
+    userNotFoundError,
+} from '../errors/errors.constants';
 
 @Controller('/user')
 export default class UserController extends BaseController {
@@ -29,7 +32,7 @@ export default class UserController extends BaseController {
             email: req.body.email,
         });
         if (oldUser) {
-            return res.status(400).send(emailAlreadyInUseError);
+            return res.status(400).send({ message: emailAlreadyInUseError });
         }
 
         const newUser = await this.userService.createUser(req.body);
@@ -45,7 +48,7 @@ export default class UserController extends BaseController {
     async deleteUser(req: Request, res: Response) {
         const deletedUser = await this.userService.deleteUser(req.params.id);
         if (!deletedUser) {
-            return res.status(404).send(userNotFoundError);
+            return res.status(404).send({ message: userNotFoundError });
         }
 
         res.status(204).send();
@@ -55,7 +58,7 @@ export default class UserController extends BaseController {
     async updateUser(req: Request, res: Response) {
         const user = await this.userService.updateUser(req.params.id, req.body);
         if (!user) {
-            return res.status(404).send(userNotFoundError);
+            return res.status(404).send({ message: userNotFoundError });
         }
 
         res.send(user);

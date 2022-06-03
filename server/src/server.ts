@@ -8,6 +8,9 @@ import { UserService } from './user/User.service';
 import { connect } from 'mongoose';
 import { AuthController } from './auth/Auth.controller';
 import { AuthService } from './auth/Auth.service';
+import { RTMPServerService } from './rtmp-server/rtmp-server.service';
+import { RTMPServerConfig } from './config/RTMP-server.config';
+import NodeMediaServer from 'node-media-server';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<UserController>(TYPES.UserController).to(UserController);
@@ -24,7 +27,7 @@ const bootstrap = async () => {
 
     await connect(process.env.MONGODB_URL!);
     await app.init();
-
+    await nodeMediaServer.run();
     const server = new Server(app.instance);
     server.listen(process.env.PORT, () => {
         console.log(`Server has started on port: ${process.env.PORT}`);
@@ -32,3 +35,22 @@ const bootstrap = async () => {
 };
 
 bootstrap();
+const RTMPConfig: any = RTMPServerConfig;
+const nodeMediaServer = new NodeMediaServer(RTMPConfig);
+
+nodeMediaServer.on(
+    'prePublish',
+    async (id: any, StreamPath: any, args: any) => {
+        let stream_key = getStreamKeyFromStreamPath(StreamPath);
+        console.log(
+            '[NodeEvent on prePublish]',
+            `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
+        );
+    }
+);
+
+const getStreamKeyFromStreamPath = (path: string) => {
+    let parts = path.split('/');
+    return parts[parts.length - 1];
+};
+

@@ -8,6 +8,6 @@ export class AuthRequiredMiddleware implements IMiddleware {
         if (req.session.user) {
             return next();
         }
-        res.send(403).send(notAuthorizedError);
+        res.send(403).send({ message: notAuthorizedError });
     }
 }

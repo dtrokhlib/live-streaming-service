@@ -10,13 +10,11 @@ export class BodyValidation implements IMiddleware {
     }
 
     async execute(req: Request, res: Response, next: NextFunction) {
-        console.log(req.body);
         Object.assign(this.classValidator, req.body);
         try {
             await validateOrReject(this.classValidator);
-        } catch(err) {
-            
-            return res.status(400).send(err);
+        } catch (err) {
+            return res.status(400).send({ message: err });
         }
         next();
     }

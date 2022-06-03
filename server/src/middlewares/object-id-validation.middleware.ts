@@ -11,7 +11,9 @@ export class ObjectIdValidation implements IMiddleware {
         if (!isValidObjectId(req.params.id)) {
             return res
                 .status(400)
-                .send(`Invalid Object Id provided as url parameter`);
+                .send({
+                    message: `Invalid Object Id provided as url parameter`,
+                });
         }
         next();
     }

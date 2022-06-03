@@ -2,11 +2,26 @@ import { model, Schema } from 'mongoose';
 import { IUser, IUserDocument, IUserModel } from './interfaces/user.interface';
 import { hash, compare } from 'bcrypt';
 
-const userSchema = new Schema({
-    email: String,
-    username: String,
-    password: String,
-});
+const userSchema = new Schema(
+    {
+        email: String,
+        username: String,
+        password: String,
+        streamKey: {
+            type: String,
+            required: false,
+        },
+    },
+    {
+        toJSON: {
+            transform: function (doc, ret) {
+                delete ret._id;
+                delete ret.password;
+                delete ret.__v;
+            },
+        },
+    }
+);
 
 userSchema.statics.build = (data: IUser): IUserDocument => {
     return new User(data);

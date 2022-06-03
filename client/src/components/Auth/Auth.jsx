@@ -8,9 +8,7 @@ function Auth() {
     const [authMode, setAuthMode] = useState(true);
 
     function switchAuthState() {
-        console.log('switch');
         setAuthMode(!authMode);
-        console.log(authMode);
     }
 
     return (

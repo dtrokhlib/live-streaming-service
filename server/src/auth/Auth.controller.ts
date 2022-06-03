@@ -15,6 +15,7 @@ import {
     gitHubUserCodeError,
     invalidCredentialsError,
 } from '../errors/errors.constants';
+import session from 'express-session';
 
 @Controller('/auth')
 export class AuthController extends BaseController {
@@ -27,7 +28,6 @@ export class AuthController extends BaseController {
 
     @Post('/login', [new BodyValidation(UserLoginDto)])
     async login(req: Request, res: Response) {
-        console.log(req.body, '111');
         const user = await this.userService.findUserByParam({
             email: req.body.email,
         });
@@ -37,9 +37,9 @@ export class AuthController extends BaseController {
         }
         const validPass = await user.verifyPassword(req.body.password);
         if (!validPass) {
-            return res.status(400).send(invalidCredentialsError);
+            return res.status(400).send({ message: invalidCredentialsError });
         }
-        console.log(user);
+        
         req.session.user = user.email;
         res.send(user);
     }
@@ -50,13 +50,13 @@ export class AuthController extends BaseController {
             email: req.body.email,
         });
         if (oldUser) {
-            return res.status(400).send(emailAlreadyInUseError);
+            return res.status(400).send({ message: emailAlreadyInUseError });
         }
 
-        const newUser = await this.userService.createUser(req.body);
+        const user = await this.userService.createUser(req.body);
 
-        req.session.user = newUser.email;
-        res.status(201).send(newUser);
+        req.session.user = user.email;
+        res.status(201).send(user);
     }
 
     @Post('/logout')
