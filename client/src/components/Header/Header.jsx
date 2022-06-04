@@ -6,18 +6,18 @@ function Header() {
         <nav className='header navbar navbar-expand-lg navbar-dark bg-dark'>
             <ul className='navbar-nav'>
                 <li className='nav-item active'>
-                    <a className='nav-link' href='/'>
+                    <a className='nav-link' href='/home'>
                         Home
                     </a>
                 </li>
                 <li className='nav-item'>
-                    <a className='nav-link' href='/'>
-                        Features
+                    <a className='nav-link' href='/settings'>
+                        Settings
                     </a>
                 </li>
                 <li className='nav-item'>
-                    <a className='nav-link' href='/'>
-                        Pricing
+                    <a className='nav-link' href='/logout'>
+                        Logout
                     </a>
                 </li>
             </ul>

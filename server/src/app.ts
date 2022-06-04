@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import path from 'path';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
@@ -54,7 +54,13 @@ export class App {
 
     private async appUse() {
         await redisClient.connect();
-        this._instance.use(cors());
+
+        this._instance.use(
+            cors({
+                credentials: true,
+                origin: 'http://localhost:3000',
+            })
+        );
         this._instance.use(cookieParser());
         this._instance.use(express.static('public'));
         this._instance.use(flash());

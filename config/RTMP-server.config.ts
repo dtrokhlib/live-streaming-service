@@ -1,6 +1,6 @@
 export const RTMPServerConfig = {
     server: {
-        secret: 'kjVkuti2xAyF3JGCzSZTk0YWM5JhI9mgQW4rytXc',
+        secret: 'fa129kOTivnRIA2ot84NT2312ASDASXZXX2321',
         port: 3333,
     },
     rtmp: {

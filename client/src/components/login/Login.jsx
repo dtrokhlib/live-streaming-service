@@ -15,9 +15,11 @@ function Login({ switchAuthState }) {
         };
 
         axios
-            .post('http://127.0.0.1:5050/auth/login', userData)
+            .post('http://127.0.0.1:5050/auth/login', userData, {
+                withCredentials: true,
+            })
             .then((res) => {
-                console.log(res.data);
+                console.log(res);
             })
             .catch((err) => {
                 alert(JSON.stringify(err.response.data.message));

@@ -14,8 +14,8 @@ import {
     emailAlreadyInUseError,
     gitHubUserCodeError,
     invalidCredentialsError,
+    notAuthenticatedError,
 } from '../errors/errors.constants';
-import session from 'express-session';
 
 @Controller('/auth')
 export class AuthController extends BaseController {
@@ -24,6 +24,14 @@ export class AuthController extends BaseController {
         @inject(TYPES.AuthService) private authService: AuthService
     ) {
         super();
+    }
+
+    @Get('/is-authenticated')
+    isAuthenticated(req: Request, res: Response) {
+        if (!req.session.user) {
+            return res.status(400).send({ message: notAuthenticatedError });
+        }
+        res.send(req.session.user);
     }
 
     @Post('/login', [new BodyValidation(UserLoginDto)])
@@ -39,7 +47,7 @@ export class AuthController extends BaseController {
         if (!validPass) {
             return res.status(400).send({ message: invalidCredentialsError });
         }
-        
+
         req.session.user = user.email;
         res.send(user);
     }

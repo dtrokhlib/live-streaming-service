@@ -2,6 +2,7 @@
 export const notAuthorizedError = 'User not authorized to view this page';
 
 // Local Auth Error constants
+export const notAuthenticatedError = 'User is not authenticated';
 export const emailAlreadyInUseError = 'Email already in use';
 export const invalidCredentialsError = 'Provided credentials are not valid';
 

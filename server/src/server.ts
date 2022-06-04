@@ -9,8 +9,9 @@ import { connect } from 'mongoose';
 import { AuthController } from './auth/Auth.controller';
 import { AuthService } from './auth/Auth.service';
 import { RTMPServerService } from './rtmp-server/rtmp-server.service';
-import { RTMPServerConfig } from './config/RTMP-server.config';
+import { RTMPServerConfig } from '../../config/RTMP-server.config';
 import NodeMediaServer from 'node-media-server';
+import { User } from './user/User.model';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<UserController>(TYPES.UserController).to(UserController);
@@ -35,13 +36,22 @@ const bootstrap = async () => {
 };
 
 bootstrap();
+
 const RTMPConfig: any = RTMPServerConfig;
 const nodeMediaServer = new NodeMediaServer(RTMPConfig);
 
 nodeMediaServer.on(
     'prePublish',
     async (id: any, StreamPath: any, args: any) => {
-        let stream_key = getStreamKeyFromStreamPath(StreamPath);
+        let streamKey = getStreamKeyFromStreamPath(StreamPath);
+
+        const user = await User.findOne({ streamKey });
+
+        if (!user) {
+            let session: any = nodeMediaServer.getSession(id);
+            session.reject();
+        }
+
         console.log(
             '[NodeEvent on prePublish]',
             `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
@@ -53,4 +63,3 @@ const getStreamKeyFromStreamPath = (path: string) => {
     let parts = path.split('/');
     return parts[parts.length - 1];
 };
-

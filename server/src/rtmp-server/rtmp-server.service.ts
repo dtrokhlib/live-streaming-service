@@ -1,5 +1,5 @@
 import { throws } from 'assert';
-import { RTMPServerConfig } from '../config/RTMP-server.config';
+import { RTMPServerConfig } from '../../../config/RTMP-server.config';
 import NodeMediaServer from 'node-media-server';
 
 export class RTMPServerService {
