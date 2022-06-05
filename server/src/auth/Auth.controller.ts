@@ -69,11 +69,8 @@ export class AuthController extends BaseController {
 
     @Post('/logout')
     async logout(req: Request, res: Response) {
-        req.session.destroy((err) => {
-            console.log(err);
-        });
-
-        res.redirect('/');
+        req.session.destroy(() => {});
+        res.redirect(process.env.CLIENT_ORIGIN_URL!);
     }
 
     // To be completed and moved to different controller

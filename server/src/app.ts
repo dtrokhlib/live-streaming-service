@@ -58,7 +58,7 @@ export class App {
         this._instance.use(
             cors({
                 credentials: true,
-                origin: 'http://localhost:3000',
+                origin: process.env.CLIENT_ORIGIN_URL!,
             })
         );
         this._instance.use(cookieParser());

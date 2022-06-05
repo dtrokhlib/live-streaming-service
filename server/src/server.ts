@@ -37,7 +37,7 @@ const bootstrap = async () => {
 
 bootstrap();
 
-const RTMPConfig: any = RTMPServerConfig;
+export const RTMPConfig: any = RTMPServerConfig;
 const nodeMediaServer = new NodeMediaServer(RTMPConfig);
 
 nodeMediaServer.on(

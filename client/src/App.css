@@ -10,3 +10,7 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.navbar-nav li {
+    padding: 0 15px;
+}

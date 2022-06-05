@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { RTMPServerConfig } from '../config/RTMP-server.config';
+import { RTMPServerConfig } from '../../config/RTMP-server.config';
 
 const LiveStreams = () => {
     const [liveStreams, setLiveStreams] = useState([]);
@@ -12,7 +12,7 @@ const LiveStreams = () => {
 
     function getLiveStreams() {
         axios
-            .get(`http://127.0.0.1:${RTMPServerConfig.http.port}/api/streams`)
+            .get(`http://localhost:${RTMPServerConfig.http.port}/api/streams`)
             .then((res) => {
                 let streams = res.data;
                 if (typeof streams['live'] !== 'undefined') {
@@ -23,7 +23,7 @@ const LiveStreams = () => {
 
     function getStreamsInfo(liveStreams) {
         axios
-            .get('/streams/info', {
+            .get('http://localhost:5050/streams/info', {
                 params: {
                     streams: liveStreams,
                 },

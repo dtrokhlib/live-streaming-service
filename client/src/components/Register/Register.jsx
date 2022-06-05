@@ -1,86 +1,102 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Register.css';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
-function Register({ switchAuthState }) {
-    const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+export default class Register extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            username: '',
+            password: '',
+            redirect: false,
+        };
+        this.onInputchange = this.onInputchange.bind(this);
+        this.localRegister = this.localRegister.bind(this);
+    }
 
-    function localRegister(e) {
+    onInputchange(event) {
+        this.setState({
+            [event.target.name]: event.target.value,
+        });
+    }
+
+    localRegister(e) {
         e.preventDefault();
 
         const userData = {
-            email: email.value,
-            username: username.value,
-            password: password.value,
+            email: this.state.email,
+            username: this.state.username,
+            password: this.state.password,
         };
 
         axios
-            .post('http://127.0.0.1:5050/auth/register', userData)
+            .post('http://localhost:5050/auth/register', userData)
             .then((res) => {
-                console.log(res.data);
+                this.setState({
+                    redirect: true,
+                });
             })
             .catch((err) => {
-                alert(JSON.stringify(err.response.data.message));
+                console.log(err);
             });
     }
 
-    return (
-        <form>
-            <div className='mb-3'>
-                <label className='form-label'>Email address</label>
-                <input
-                    ref={(value) => {
-                        setEmail(value);
-                    }}
-                    type='email'
-                    className='form-control'
-                    aria-describedby='emailHelp'
-                />
-            </div>
-            <div className='mb-3'>
-                <label className='form-label'>Username</label>
-                <input
-                    ref={(value) => {
-                        setUsername(value);
-                    }}
-                    type='text'
-                    className='form-control'
-                    aria-describedby='emailHelp'
-                />
-            </div>
-            <div className='mb-3'>
-                <label className='form-label'>Password</label>
-                <input
-                    ref={(value) => {
-                        setPassword(value);
-                    }}
-                    type='password'
-                    autoComplete='true'
-                    className='form-control'
-                />
-            </div>
-            <div className='mb-3 button-block'>
-                <button
-                    onClick={localRegister}
-                    className='btn btn-light btn-login'
-                >
-                    Register
-                </button>
-            </div>
-            <div className='mb-3 button-block'>
-                Have an account?
-                <button
-                    type='button'
-                    onClick={switchAuthState}
-                    className='btn btn-link'
-                >
-                    Login
-                </button>
-            </div>
-        </form>
-    );
+    render() {
+        return (
+            <form>
+                <div className='mb-3'>
+                    <label className='form-label'>Email address</label>
+                    <input
+                        value={this.state.email}
+                        onChange={this.onInputchange}
+                        type='email'
+                        name='email'
+                        className='form-control'
+                    />
+                </div>
+                <div className='mb-3'>
+                    <label className='form-label'>Username</label>
+                    <input
+                        value={this.state.username}
+                        onChange={this.onInputchange}
+                        name='username'
+                        type='text'
+                        className='form-control'
+                    />
+                </div>
+                <div className='mb-3'>
+                    <label className='form-label'>Password</label>
+                    <input
+                        value={this.state.password}
+                        onChange={this.onInputchange}
+                        name='password'
+                        type='password'
+                        autoComplete='true'
+                        className='form-control'
+                    />
+                </div>
+                <div className='mb-3 button-block'>
+                    <button
+                        onClick={this.localRegister}
+                        className='btn btn-light btn-login'
+                    >
+                        Register
+                    </button>
+                </div>
+                <div className='mb-3 button-block'>
+                    Have an account?
+                    <button
+                        type='button'
+                        onClick={this.props.switchAuthState}
+                        className='btn btn-link'
+                    >
+                        Login
+                    </button>
+                </div>
+                {this.state.redirect ? <Navigate to='/home' /> : null}
+            </form>
+        );
+    }
 }
-
-export default Register;

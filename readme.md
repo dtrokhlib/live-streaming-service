@@ -9,7 +9,8 @@ SALT_ROUNDS=
 MONGODB_URL=
 CLIENT_ID= (GITHUB)
 CLIENT_SECRET= (GITHUB)
-PMRT_SERVER_SECRET
+PMRT_SERVER_SECRET=
+CLIENT_ORIGIN_URL=
 ```
 
 Start docker containers for Redias and MongoDB connection from Infra folder (Docker should be installed on the system and):
