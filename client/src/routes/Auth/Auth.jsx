@@ -11,10 +11,11 @@ export default class Auth extends React.Component {
         this.state = {
             authMode: true,
         };
+        this.switchAuthState = this.switchAuthState.bind(this);
     }
 
     switchAuthState() {
-        this.setState(!this.state.authMode);
+        this.setState({ authMode: !this.state.authMode });
     }
 
     render() {

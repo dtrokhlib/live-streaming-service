@@ -30,13 +30,12 @@ export default class Login extends React.Component {
         };
 
         axios
-            .post('http://localhost:5050/auth/login', userData, {
-                withCredentials: true,
-            })
+            .post('http://localhost:5050/auth/login', userData)
             .then((res) => {
                 this.setState({
                     redirect: true,
                 });
+                localStorage.setItem('token', res.data.token);
             })
             .catch((err) => {
                 console.log(err);

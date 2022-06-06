@@ -7,52 +7,61 @@ import LiveStreams from './routes/LiveStreams/LiveStreams';
 import VideoPlayer from './routes/VideoPlayer/VideoPlayer';
 import Settings from './routes/Settings/Settings';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            authenticated: true,
-            user: '',
+            authenticated: false,
+            user: {
+                email: '',
+                username: '',
+                id: '',
+            },
         };
 
         this.logout = this.logout.bind(this);
     }
 
-    componentDidMount() {
-        axios
-            .get('http://localhost:5050/auth/is-authenticated', {
-                withCredentials: true,
-            })
-            .then((res) => {
-                console.log(res);
-                if (res.status === 200) {
-                    this.setState({
-                        authenticated: true,
-                        user: res.data,
-                    });
+    async componentDidMount() {
+        try {
+            const res = await axios.get(
+                'http://localhost:5050/auth/is-authenticated',
+                {
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
                 }
-            })
-            .catch((err) => {
-                this.setState({
-                    authenticated: false,
-                    user: '',
-                });
+            );
+
+            if (res.status !== 200) {
+                throw new Error('Not authorized');
+            }
+            this.setState({
+                authenticated: true,
+                user: Object.assign(this.state.user, res.data),
             });
+        } catch (err) {
+            this.setState({
+                authenticated: false,
+                user: '',
+            });
+        }
     }
 
     async logout(e) {
         e.preventDefault();
 
         await axios.post('http://localhost:5050/auth/logout', {
-            withCredentials: true,
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
         });
 
         this.setState({
-            loggedOut: !this.state.loggedOut,
+            authenticated: false,
         });
-
-        window.location.href = '/';
     }
 
     render() {
@@ -67,8 +76,13 @@ export default class App extends React.Component {
                         <Routes>
                             <Route
                                 path='auth'
-                                isAuthenticated={this.state.authenticated}
-                                element={<Auth />}
+                                element={
+                                    <Auth
+                                        isAuthenticated={
+                                            this.state.authenticated
+                                        }
+                                    />
+                                }
                             />
                             <Route
                                 exact
@@ -76,14 +90,12 @@ export default class App extends React.Component {
                                 isAuthenticated={this.state.authenticated}
                                 element={<LiveStreams />}
                             />
-
                             <Route
                                 exact
                                 isAuthenticated={this.state.authenticated}
                                 path='/stream/:username'
                                 element={<VideoPlayer />}
                             />
-
                             <Route
                                 exact
                                 path='/settings'
@@ -94,6 +106,11 @@ export default class App extends React.Component {
                                         }
                                     />
                                 }
+                            />
+                            <Route
+                                path='*'
+                                exact={true}
+                                component={<Navigate to='/home' />}
                             />
                         </Routes>
                     </BrowserRouter>

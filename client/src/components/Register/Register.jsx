@@ -37,6 +37,7 @@ export default class Register extends React.Component {
                 this.setState({
                     redirect: true,
                 });
+                localStorage.setItem('token', res.data.token);
             })
             .catch((err) => {
                 console.log(err);
