@@ -16,6 +16,7 @@ import {
     invalidCredentialsError,
     notAuthenticatedError,
 } from '../errors/errors.constants';
+import { AuthRequiredMiddleware } from '../middlewares/auth-required.middleware';
 
 @Controller('/auth')
 export class AuthController extends BaseController {
@@ -28,10 +29,10 @@ export class AuthController extends BaseController {
 
     @Get('/is-authenticated')
     isAuthenticated(req: Request, res: Response) {
-        if (!req.session.user) {
+        if (!req.user) {
             return res.status(400).send({ message: notAuthenticatedError });
         }
-        res.send(req.session.user);
+        res.send(req.user);
     }
 
     @Post('/login', [new BodyValidation(UserLoginDto)])
@@ -48,8 +49,9 @@ export class AuthController extends BaseController {
             return res.status(400).send({ message: invalidCredentialsError });
         }
 
-        req.session.user = user.email;
-        res.send(user);
+        const token = await user.generateToken();
+
+        res.send({ user, token });
     }
 
     @Post('/register', [new BodyValidation(UserDto)])
@@ -62,15 +64,25 @@ export class AuthController extends BaseController {
         }
 
         const user = await this.userService.createUser(req.body);
+        const token = await user.generateToken();
 
-        req.session.user = user.email;
-        res.status(201).send(user);
+        res.send({ user, token });
     }
 
-    @Post('/logout')
+    @Post('/logout', [new AuthRequiredMiddleware()])
     async logout(req: Request, res: Response) {
-        req.session.destroy(() => {});
-        res.redirect(process.env.CLIENT_ORIGIN_URL!);
+        const user = req.user;
+        await user!.destroyToken(req.token!);
+
+        res.send();
+    }
+
+    @Post('/logout-all', [new AuthRequiredMiddleware()])
+    async logoutAll(req: Request, res: Response) {
+        const user = req.user;
+        await user!.removeAllTokens();
+
+        res.send();
     }
 
     // To be completed and moved to different controller

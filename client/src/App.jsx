@@ -44,11 +44,15 @@ export default class App extends React.Component {
     async logout(e) {
         e.preventDefault();
 
-        await axios.post('http://localhost:5050/auth/logout');
+        await axios.post('http://localhost:5050/auth/logout', {
+            withCredentials: true,
+        });
 
         this.setState({
             loggedOut: !this.state.loggedOut,
         });
+
+        window.location.href = '/';
     }
 
     render() {

@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { IUser, IUserDocument, IUserModel } from './interfaces/user.interface';
 import { hash, compare } from 'bcrypt';
+import { sign, verify } from 'jsonwebtoken';
 
 const userSchema = new Schema(
     {
@@ -11,6 +12,11 @@ const userSchema = new Schema(
             type: String,
             required: false,
         },
+        tokens: [
+            {
+                token: String,
+            },
+        ],
     },
     {
         toJSON: {
@@ -19,6 +25,7 @@ const userSchema = new Schema(
                 delete ret._id;
                 delete ret.password;
                 delete ret.__v;
+                delete ret.tokens;
             },
         },
     }
@@ -56,6 +63,53 @@ userSchema.methods.verifyPassword = async function (
     } catch (err) {
         return false;
     }
+};
+
+userSchema.methods.generateToken = async function () {
+    const user = this;
+    const token = await sign({ user: user.id }, process.env.JWT_SECRET!, {
+        expiresIn: '1h',
+    });
+    user.tokens.push({ token });
+    await user.save();
+    return token;
+};
+
+userSchema.statics.verifyToken = async function (token: string) {
+    try {
+        const payload = (await verify(token, process.env.JWT_SECRET!)) as {
+            user: string;
+        };
+
+        const user = await User.findById(payload.user);
+        if (!user || !user.tokens) {
+            return null;
+        }
+
+        const tokenToUser = user.tokens.filter((item: any) => {
+            return item.token === token;
+        }).length;
+        if (!tokenToUser) {
+            return false;
+        }
+
+        return user;
+
+    } catch (err) {
+        return null;
+    }
+};
+
+userSchema.methods.destroyToken = async function (token: string) {
+    const user = this;
+    user.tokens = user.tokens.filter((item: any) => item.token !== token);
+    await user.save();
+};
+
+userSchema.methods.removeAllTokens = async function () {
+    const user = this;
+    user.tokens = [];
+    await user.save();
 };
 
 export const User = model<IUserDocument, IUserModel>('User', userSchema);

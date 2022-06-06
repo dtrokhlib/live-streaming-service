@@ -5,6 +5,11 @@ export interface IUser {
     email: string;
     password: string;
     streamKey?: string;
+    tokens?: [
+        {
+            token: string;
+        }
+    ];
 }
 
 export interface IUserDocument extends Document {
@@ -12,10 +17,18 @@ export interface IUserDocument extends Document {
     email: string;
     password: string;
     streamKey?: string;
+    tokens?: [
+        {
+            token: string;
+        }
+    ];
     verifyPassword: (password: string) => boolean;
     generateToken: () => string;
+    destroyToken: (token: string) => void;
+    removeAllTokens: () => void;
 }
 
 export interface IUserModel extends Model<IUserDocument> {
     build: (data: IUser) => IUserDocument;
+    verifyToken: (token: string) => null | IUserDocument;
 }
