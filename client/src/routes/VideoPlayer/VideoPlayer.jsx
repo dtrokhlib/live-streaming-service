@@ -15,7 +15,6 @@ export default class VideoPlayer extends React.Component {
         return (
             <div>
                 <h1>VideoPlayer</h1>{' '}
-                {!this.props.isAuthenticated ? <Navigate to='/auth' /> : null}
             </div>
         );
     }

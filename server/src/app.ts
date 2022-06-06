@@ -30,6 +30,7 @@ export class App {
         const userRouter = bindRoutes(this.userController, UserController);
         const authRouter = bindRoutes(this.authController, AuthController);
 
+        this._instance.use(new IsAuthorizedMiddleware().execute);
         this._instance.use(userRouter.basePath, userRouter.router);
         this._instance.use(authRouter.basePath, authRouter.router);
     }
@@ -42,7 +43,6 @@ export class App {
         );
         this._instance.use(express.json());
         this._instance.use(express.urlencoded({ extended: true }));
-        this._instance.use(new IsAuthorizedMiddleware().execute);
     }
 
     public async init() {

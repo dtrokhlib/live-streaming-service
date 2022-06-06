@@ -36,6 +36,7 @@ export default class Login extends React.Component {
                     redirect: true,
                 });
                 localStorage.setItem('token', res.data.token);
+                window.location.href = '/'
             })
             .catch((err) => {
                 console.log(err);

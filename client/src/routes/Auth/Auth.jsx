@@ -30,7 +30,6 @@ export default class Auth extends React.Component {
                 {!this.state.authMode && (
                     <Register switchAuthState={this.switchAuthState} />
                 )}
-                {this.props.isAuthenticated ? <Navigate to='/home' /> : null}
             </div>
         );
     }

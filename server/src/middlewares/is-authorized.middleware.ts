@@ -12,12 +12,11 @@ export class IsAuthorizedMiddleware implements IMiddleware {
                 return next();
             }
             const user = await User.verifyToken(token);
-
             if (!user) {
                 return next();
             }
-            req.user = user;
             req.token = token;
+            req.user = user;
             next();
         } catch (err) {
             next();
