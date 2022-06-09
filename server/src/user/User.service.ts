@@ -30,6 +30,14 @@ export class UserService {
     }
 
     async updateUser(id: string, data: any): Promise<IUserDocument | null> {
-        return await User.findByIdAndUpdate(id, { ...data });
+        const user = await User.findById(id);
+        if (!user) {
+            return null;
+        }
+        console.log(data)
+        Object.assign(user, data);
+        await user.save();
+
+        return user;
     }
 }

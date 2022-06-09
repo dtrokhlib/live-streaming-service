@@ -6,7 +6,7 @@ export class IsAuthorizedMiddleware implements IMiddleware {
     async execute(req: Request, res: Response, next: NextFunction) {
         try {
             const token = req.headers['authorization']
-                ? req.headers['authorization'].split(' ')[1]
+                ? (req.headers['authorization'] as string).split(' ')[1]
                 : false;
             if (!token) {
                 return next();

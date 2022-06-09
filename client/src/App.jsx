@@ -8,6 +8,10 @@ import VideoPlayer from './routes/VideoPlayer/VideoPlayer';
 import Settings from './routes/Settings/Settings';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
+    'token'
+)}`;
+
 export default class App extends React.Component {
     constructor(props) {
         super(props);
@@ -26,14 +30,7 @@ export default class App extends React.Component {
     async componentDidMount() {
         try {
             const res = await axios.get(
-                'http://localhost:5050/auth/is-authenticated',
-                {
-                    headers: {
-                        authorization: `Bearer ${localStorage.getItem(
-                            'token'
-                        )}`,
-                    },
-                }
+                'http://localhost:5050/auth/is-authenticated'
             );
 
             if (res.status !== 200) {
@@ -56,15 +53,7 @@ export default class App extends React.Component {
     async logout(e) {
         e.preventDefault();
 
-        await axios.post(
-            'http://localhost:5050/auth/logout',
-            {},
-            {
-                headers: {
-                    authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            }
-        );
+        await axios.post('http://localhost:5050/auth/logout');
 
         this.setState({
             authenticated: false,

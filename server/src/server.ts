@@ -12,12 +12,14 @@ import { RTMPServerService } from './rtmp-server/rtmp-server.service';
 import { RTMPServerConfig } from '../../config/RTMP-server.config';
 import NodeMediaServer from 'node-media-server';
 import { User } from './user/User.model';
+import { StreamController } from './stream/Stream.controller';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<UserController>(TYPES.UserController).to(UserController);
     bind<UserService>(TYPES.UserService).to(UserService);
     bind<AuthController>(TYPES.AuthController).to(AuthController);
     bind<AuthService>(TYPES.AuthService).to(AuthService);
+    bind<StreamController>(TYPES.StreamController).to(StreamController);
     bind<App>(TYPES.Application).to(App).inSingletonScope();
 });
 

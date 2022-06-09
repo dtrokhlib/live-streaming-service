@@ -11,3 +11,7 @@ export const userNotFoundError = 'User with this ID is not found';
 
 // GitHub Error constants
 export const gitHubUserCodeError = 'GitHub User Code was not provided';
+
+// Stream Error constants
+export const userStreamKeyNotGeneratedError =
+    'Steam Key was not generated or attached to User record';

@@ -8,6 +8,7 @@ import { bindRoutes } from './utils/bind-routes';
 import { AuthController } from './auth/Auth.controller';
 import cors from 'cors';
 import { IsAuthorizedMiddleware } from './middlewares/is-authorized.middleware';
+import { StreamController } from './stream/Stream.controller';
 
 @injectable()
 export class App {
@@ -19,7 +20,9 @@ export class App {
 
     constructor(
         @inject(TYPES.UserController) private userController: UserController,
-        @inject(TYPES.AuthController) private authController: AuthController
+        @inject(TYPES.AuthController) private authController: AuthController,
+        @inject(TYPES.StreamController)
+        private streamController: StreamController
     ) {
         this._instance = express();
     }
@@ -29,10 +32,15 @@ export class App {
     private useRoutes() {
         const userRouter = bindRoutes(this.userController, UserController);
         const authRouter = bindRoutes(this.authController, AuthController);
+        const streamRouter = bindRoutes(
+            this.streamController,
+            StreamController
+        );
 
         this._instance.use(new IsAuthorizedMiddleware().execute);
         this._instance.use(userRouter.basePath, userRouter.router);
         this._instance.use(authRouter.basePath, authRouter.router);
+        this._instance.use(streamRouter.basePath, streamRouter.router);
     }
 
     private async appUse() {
