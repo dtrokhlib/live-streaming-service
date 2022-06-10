@@ -58,7 +58,7 @@ export class LiveStreams extends React.Component {
                                 align='center'
                                 alt=''
                                 src={
-                                    'http:localhost:5050/thumbnails/' + stream.streamKey + '.png'
+                                    'http://localhost:5050/thumbnails/' + stream.streamKey + '.png'
                                 }
                             />
                         </div>

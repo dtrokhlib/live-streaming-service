@@ -36,7 +36,14 @@ export class App {
             this.streamController,
             StreamController
         );
-
+        this._instance.use(
+            express.static(path.join(__dirname, '../thumbnails'))
+        );
+        console.log(path.join(__dirname, '../thumbnails'));
+        this._instance.use(
+            '/thumbnails',
+            express.static(path.join(__dirname, '../thumbnails'))
+        );
         this._instance.use(new IsAuthorizedMiddleware().execute);
         this._instance.use(userRouter.basePath, userRouter.router);
         this._instance.use(authRouter.basePath, authRouter.router);
@@ -44,11 +51,7 @@ export class App {
     }
 
     private async appUse() {
-        this._instance.use(
-            cors({
-                origin: process.env.CLIENT_ORIGIN_URL!,
-            })
-        );
+        this._instance.use(cors());
         this._instance.use(express.json());
         this._instance.use(express.urlencoded({ extended: true }));
         this._instance.use('/thumbnails', express.static('/thumbnails'));
