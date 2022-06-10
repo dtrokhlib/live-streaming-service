@@ -1,27 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { RTMPServerConfig } from '../../config/RTMP-server.config';
+import style from './LiveStreams.module.css';
 
-const LiveStreams = () => {
-    const [liveStreams, setLiveStreams] = useState([]);
+export class LiveStreams extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            streams: [],
+        };
 
-    useEffect(() => {
-        getLiveStreams();
-    });
+        this.getLiveStreams = this.getLiveStreams.bind(this);
+        this.getStreamsInfo = this.getStreamsInfo.bind(this);
+        this.streams = this.streams.bind(this);
+    }
 
-    function getLiveStreams() {
+    componentDidMount() {
+        this.getLiveStreams();
+    }
+
+    getLiveStreams() {
         axios
             .get(`http://localhost:${RTMPServerConfig.http.port}/api/streams`)
             .then((res) => {
                 let streams = res.data;
+                console.log(res.data);
                 if (typeof streams['live'] !== 'undefined') {
-                    getStreamsInfo(streams['live']);
+                    this.getStreamsInfo(streams['live']);
                 }
             });
     }
 
-    function getStreamsInfo(liveStreams) {
+    getStreamsInfo(liveStreams) {
         axios
             .get('http://localhost:5050/streams/info', {
                 params: {
@@ -29,12 +40,12 @@ const LiveStreams = () => {
                 },
             })
             .then((res) => {
-                setLiveStreams(res.data);
+                this.setState({ streams: res.data });
             });
     }
 
-    function streams() {
-        return liveStreams.map((stream, index) => {
+    streams() {
+        return this.state.streams.map((stream, index) => {
             return (
                 <div
                     className='stream col-xs-12 col-sm-12 col-md-3 col-lg-4'
@@ -47,7 +58,7 @@ const LiveStreams = () => {
                                 align='center'
                                 alt=''
                                 src={
-                                    '/thumbnails/' + stream.stream_key + '.png'
+                                    'http:localhost:5050/thumbnails/' + stream.streamKey + '.png'
                                 }
                             />
                         </div>
@@ -63,14 +74,16 @@ const LiveStreams = () => {
         });
     }
 
-    return (
-        <div className='container mt-5'>
-            <h4>Live Streams</h4>
-            <hr className='my-4' />
+    render() {
+        return (
+            <div className={style.streamContainer}>
+                <h4>Live Streams</h4>
+                <hr className='my-4' />
 
-            <div className='streams row'>{streams()}</div>
-        </div>
-    );
-};
+                <div className='streams row'>{this.streams()}</div>
+            </div>
+        );
+    }
+}
 
 export default LiveStreams;

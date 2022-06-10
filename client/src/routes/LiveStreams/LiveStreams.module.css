@@ -1,0 +1,28 @@
+.streams .stream .live-label {
+	 position: absolute;
+	 top: 10px;
+	 left: 20px;
+	 background-color: red;
+	 color: white;
+	 padding: 1px 5px;
+}
+ .streams .stream .stream-thumbnail img {
+	 width: 100%;
+}
+ .streams .stream .username {
+	 position: absolute;
+	 bottom: 10px;
+	 left: 20px;
+	 background-color: black;
+}
+ .streams .stream .username a {
+	 font-size: 18px;
+	 color: white;
+	 text-decoration: none;
+	 padding: 2px 8px;
+}
+ 
+.streamContainer {
+    width: 90vw !important;
+    align-self: start;
+}

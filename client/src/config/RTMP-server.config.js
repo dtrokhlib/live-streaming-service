@@ -12,7 +12,7 @@ export const RTMPServerConfig = {
     },
     http: {
         port: 8888,
-        mediaroot: './media',
+        mediaroot: '../media',
         allow_origin: '*',
     },
     trans: {

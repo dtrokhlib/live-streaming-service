@@ -14,38 +14,52 @@ export default class VideoPlayer extends React.Component {
             stream: false,
             videoJsOptions: null,
         };
+
+        this.initPlayer = this.initPlayer.bind(this);
     }
 
     componentDidMount() {
-        axios.get('http://localhost:5050/user').then((res) => {
-            this.state(
-                {
-                    stream: true,
-                    controls: true,
-                    sources: [
-                        {
-                            src:
-                                'http://localhost:' +
-                                RTMPServerConfig.http.port +
-                                '/live/' +
-                                res.data.stream_key +
-                                '/index.m3u8',
-                            type: 'application/x-mpegURL',
-                        },
-                    ],
-                    fluid: true,
+        this.initPlayer();
+    }
+
+    initPlayer() {
+        const url = window.location.href.split('/');
+        const username = url[url.length - 1];
+        axios
+            .get('http://localhost:5050/streams/user', {
+                params: {
+                    username,
                 },
-                () => {
-                    this.player = videojs(
-                        this.videoNode,
-                        this.state.videoJsOptions,
-                        function onPlayerReady() {
-                            console.log('onPlayerReady', this);
-                        }
-                    );
-                }
-            );
-        });
+            })
+            .then((res) => {
+                this.setState(
+                    {
+                        stream: true,
+                        controls: true,
+                        sources: [
+                            {
+                                src:
+                                    'http://127.0.0.1:' +
+                                    RTMPServerConfig.http.port +
+                                    '/live/' +
+                                    res.data.streamKey +
+                                    '/index.m3u8',
+                                type: 'application/x-mpegURL',
+                            },
+                        ],
+                        fluid: true,
+                    },
+                    () => {
+                        this.player = videojs(
+                            this.videoNode,
+                            this.state.videoJsOptions,
+                            function onPlayerReady() {
+                                console.log('onPlayerReady', this);
+                            }
+                        );
+                    }
+                );
+            });
     }
 
     componentWillUnmount() {
