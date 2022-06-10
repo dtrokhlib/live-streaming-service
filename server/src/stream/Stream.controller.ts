@@ -29,7 +29,9 @@ export class StreamController extends BaseController {
     @Post('/stream-key', [new AuthRequiredMiddleware()])
     async generateStreamKey(req: Request, res: Response) {
         const streamKey = shortid.generate();
-        const user = await this.userService.updateUser(req.user?.id, { streamKey });
+        const user = await this.userService.updateUser(req.user?.id, {
+            streamKey,
+        });
 
         if (user?.streamKey !== streamKey) {
             return res
@@ -38,6 +40,20 @@ export class StreamController extends BaseController {
         }
 
         res.send({ streamKey });
+    }
+
+    @Get('/user')
+    async getStreamer(req: Request, res: Response) {
+        if (!req.query.username) {
+            return res
+                .status(400)
+                .send({ message: 'Streamer Username is not provided' });
+        }
+        res.send(
+            await this.userService.findUserByParam({
+                username: req.query.username,
+            })
+        );
     }
 
     @Get('/info', [new AuthRequiredMiddleware()])
@@ -49,7 +65,7 @@ export class StreamController extends BaseController {
         let stream_keys = [];
         for (let stream in streams) {
             if (!streams.hasOwnProperty(stream)) continue;
-            stream_keys.push({ stream_key: stream });
+            stream_keys.push({ streamKey: stream });
         }
 
         const users = await User.find({ $or: stream_keys });

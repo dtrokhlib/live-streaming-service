@@ -13,6 +13,8 @@ import { RTMPServerConfig } from '../../config/RTMP-server.config';
 import NodeMediaServer from 'node-media-server';
 import { User } from './user/User.model';
 import { StreamController } from './stream/Stream.controller';
+import { generateStreamThumbnail } from './utils/generate-stream-thumbnail';
+import { cronThumbnailGenerateJob } from './utils/cron-thumbnail-generate';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<UserController>(TYPES.UserController).to(UserController);
@@ -31,6 +33,7 @@ const bootstrap = async () => {
     await connect(process.env.MONGODB_URL!);
     await app.init();
     await nodeMediaServer.run();
+    cronThumbnailGenerateJob.start();
     const server = new Server(app.instance);
     server.listen(process.env.PORT, () => {
         console.log(`Server has started on port: ${process.env.PORT}`);
@@ -52,6 +55,8 @@ nodeMediaServer.on(
         if (!user) {
             let session: any = nodeMediaServer.getSession(id);
             session.reject();
+        } else {
+            generateStreamThumbnail(streamKey);
         }
 
         console.log(

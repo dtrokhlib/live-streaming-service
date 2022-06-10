@@ -1,4 +1,7 @@
 export const RTMPServerConfig = {
+    server_host: 'http://localhost:5050',
+    client_host: 'https://localhost:3000',
+
     server: {
         secret: 'fa129kOTivnRIA2ot84NT2312ASDASXZXX2321',
         port: 3333,
@@ -11,8 +14,9 @@ export const RTMPServerConfig = {
         ping_timeout: 30,
     },
     http: {
+        host: 'https://127.0.0.1',
         port: 8888,
-        mediaroot: './media',
+        mediaroot: '../media',
         allow_origin: '*',
     },
     trans: {

@@ -26,5 +26,5 @@
 /client/yarn-debug.log*
 /client/yarn-error.log*
 
-/server/media
+/server/media/live
 /server/dist

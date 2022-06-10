@@ -51,6 +51,7 @@ export class App {
         );
         this._instance.use(express.json());
         this._instance.use(express.urlencoded({ extended: true }));
+        this._instance.use('/thumbnails', express.static('/thumbnails'));
     }
 
     public async init() {
