@@ -8,12 +8,7 @@ import { UserService } from './user/User.service';
 import { connect } from 'mongoose';
 import { AuthController } from './auth/Auth.controller';
 import { AuthService } from './auth/Auth.service';
-import { RTMPServerService } from './rtmp-server/rtmp-server.service';
-import { RTMPServerConfig } from '../../config/RTMP-server.config';
-import NodeMediaServer from 'node-media-server';
-import { User } from './user/User.model';
 import { StreamController } from './stream/Stream.controller';
-import { generateStreamThumbnail } from './utils/generate-stream-thumbnail';
 import { cronThumbnailGenerateJob } from './utils/cron-thumbnail-generate';
 import { nodeMediaServer } from './RTMP-server';
 

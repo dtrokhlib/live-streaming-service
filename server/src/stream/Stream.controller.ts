@@ -8,7 +8,6 @@ import { Request, Response } from 'express';
 
 import { AuthRequiredMiddleware } from '../middlewares/auth-required.middleware';
 import { AuthService } from '../auth/Auth.service';
-import { User } from '../user/User.model';
 import shortid from 'shortid';
 import { userStreamKeyNotGeneratedError } from '../errors/errors.constants';
 import { RTMPServerConfig } from '../../../config/RTMP-server.config';
@@ -17,6 +16,7 @@ import { RTMPServerConfig } from '../../../config/RTMP-server.config';
 export class StreamController extends BaseController {
     constructor(
         @inject(TYPES.UserService) private userService: UserService,
+        @inject(TYPES.AuthService) private authService: AuthService
     ) {
         super();
     }
@@ -68,7 +68,9 @@ export class StreamController extends BaseController {
             streamKeys.push({ streamKey: stream });
         }
 
-        const users = await User.find({ $or: streamKeys });
+        const users = await this.userService.findAllUsersByParam({
+            $or: streamKeys,
+        });
         if (!users) return res.send();
 
         res.send(users);
@@ -76,6 +78,6 @@ export class StreamController extends BaseController {
 
     @Get('/config')
     async streamsConfig(req: Request, res: Response) {
-        res.send(RTMPServerConfig)
+        res.send(RTMPServerConfig);
     }
 }

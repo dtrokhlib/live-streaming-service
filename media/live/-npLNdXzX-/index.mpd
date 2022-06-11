@@ -7,8 +7,8 @@
 	type="dynamic"
 	minimumUpdatePeriod="PT12S"
 	suggestedPresentationDelay="PT12S"
-	availabilityStartTime="2022-06-11T15:00:11.248Z"
-	publishTime="2022-06-11T15:04:35.047Z"
+	availabilityStartTime="2022-06-11T16:39:35.699Z"
+	publishTime="2022-06-11T16:40:28.800Z"
 	timeShiftBufferDepth="PT37.5S"
 	maxSegmentDuration="PT5.0S"
 	minBufferTime="PT25.0S">
@@ -20,9 +20,9 @@
 		<AdaptationSet id="0" contentType="audio" startWithSAP="1" segmentAlignment="true" bitstreamSwitching="true">
 			<Representation id="0" mimeType="audio/mp4" codecs="mp4a.40.2" bandwidth="163840" audioSamplingRate="48000">
 				<AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="2" />
-				<SegmentTemplate timescale="48000" initialization="init-stream$RepresentationID$.m4s" media="chunk-stream$RepresentationID$-$Number%05d$.m4s" startNumber="51">
+				<SegmentTemplate timescale="48000" initialization="init-stream$RepresentationID$.m4s" media="chunk-stream$RepresentationID$-$Number%05d$.m4s" startNumber="9">
 					<SegmentTimeline>
-						<S t="12031968" d="240624" />
+						<S t="1925088" d="240624" />
 						<S d="240672" />
 						<S d="240624" />
 					</SegmentTimeline>
@@ -31,9 +31,9 @@
 		</AdaptationSet>
 		<AdaptationSet id="1" contentType="video" startWithSAP="1" segmentAlignment="true" bitstreamSwitching="true" frameRate="20/1" maxWidth="1920" maxHeight="1080" par="16:9">
 			<Representation id="1" mimeType="video/mp4" codecs="avc1.640028" bandwidth="2560000" width="1920" height="1080" sar="1:1">
-				<SegmentTemplate timescale="10240" initialization="init-stream$RepresentationID$.m4s" media="chunk-stream$RepresentationID$-$Number%05d$.m4s" startNumber="19">
+				<SegmentTemplate timescale="10240" initialization="init-stream$RepresentationID$.m4s" media="chunk-stream$RepresentationID$-$Number%05d$.m4s" startNumber="2">
 					<SegmentTimeline>
-						<S t="2304000" d="128000" r="2" />
+						<S t="128000" d="128000" r="2" />
 					</SegmentTimeline>
 				</SegmentTemplate>
 			</Representation>

@@ -14,6 +14,10 @@ export class UserService {
         return await User.findOne({ ...param });
     }
 
+    async findAllUsersByParam(param: Object): Promise<IUserDocument[] | null> {
+        return await User.find(param);
+    }
+
     async findUserById(id: string): Promise<IUserDocument | null> {
         return await User.findById(id);
     }
@@ -34,7 +38,7 @@ export class UserService {
         if (!user) {
             return null;
         }
-        console.log(data)
+        console.log(data);
         Object.assign(user, data);
         await user.save();
 
