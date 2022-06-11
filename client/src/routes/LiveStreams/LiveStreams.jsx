@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { RTMPServerConfig } from '../../config/RTMP-server.config';
 import style from './LiveStreams.module.css';
 
 export class LiveStreams extends React.Component {
@@ -16,16 +15,18 @@ export class LiveStreams extends React.Component {
         this.streams = this.streams.bind(this);
     }
 
-    componentDidMount() {
-        this.getLiveStreams();
+    async componentDidMount() {
+        let { data: RTMPServerConfig } = await axios.get(
+            'http://localhost:5050/streams/config'
+        );
+        this.getLiveStreams(RTMPServerConfig);
     }
 
-    getLiveStreams() {
+    getLiveStreams(RTMPServerConfig) {
         axios
             .get(`http://localhost:${RTMPServerConfig.http.port}/api/streams`)
             .then((res) => {
                 let streams = res.data;
-                console.log(res.data);
                 if (typeof streams['live'] !== 'undefined') {
                     this.getStreamsInfo(streams['live']);
                 }
@@ -57,8 +58,11 @@ export class LiveStreams extends React.Component {
                             <img
                                 align='center'
                                 alt=''
+                                width={450}
                                 src={
-                                    'http://localhost:5050/thumbnails/' + stream.streamKey + '.png'
+                                    'http://localhost:5050/thumbnails/' +
+                                    stream.streamKey +
+                                    '.png'
                                 }
                             />
                         </div>

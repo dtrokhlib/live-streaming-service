@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
+import './VideoPlayer.module.css';
 import React from 'react';
 import videojs from 'video.js';
-import { RTMPServerConfig } from '../../config/RTMP-server.config';
 
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
     'token'
@@ -18,11 +17,14 @@ export default class VideoPlayer extends React.Component {
         this.initPlayer = this.initPlayer.bind(this);
     }
 
-    componentDidMount() {
-        this.initPlayer();
+    async componentDidMount() {
+        let { data: RTMPServerConfig } = await axios.get(
+            'http://localhost:5050/streams/config'
+        );
+        this.initPlayer(RTMPServerConfig);
     }
 
-    initPlayer() {
+    initPlayer(RTMPServerConfig) {
         const url = window.location.href.split('/');
         const username = url[url.length - 1];
         axios
@@ -35,19 +37,22 @@ export default class VideoPlayer extends React.Component {
                 this.setState(
                     {
                         stream: true,
-                        controls: true,
-                        sources: [
-                            {
-                                src:
-                                    'http://127.0.0.1:' +
-                                    RTMPServerConfig.http.port +
-                                    '/live/' +
-                                    res.data.streamKey +
-                                    '/index.m3u8',
-                                type: 'application/x-mpegURL',
-                            },
-                        ],
-                        fluid: true,
+                        videoJsOptions: {
+                            autoplay: false,
+                            controls: true,
+                            sources: [
+                                {
+                                    src:
+                                        'http://127.0.0.1:' +
+                                        RTMPServerConfig.http.port +
+                                        '/live/' +
+                                        res.data.streamKey +
+                                        '/index.m3u8',
+                                    type: 'application/x-mpegURL',
+                                },
+                            ],
+                            fluid: true,
+                        },
                     },
                     () => {
                         this.player = videojs(
@@ -70,7 +75,7 @@ export default class VideoPlayer extends React.Component {
 
     render() {
         return (
-            <div className='row'>
+            <div className='row video-block'>
                 <div className='col-xs-12 col-sm-12 col-md-10 col-lg-8 mx-auto mt-5'>
                     {this.state.stream ? (
                         <div data-vjs-player>

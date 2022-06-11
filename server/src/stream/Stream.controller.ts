@@ -11,19 +11,19 @@ import { AuthService } from '../auth/Auth.service';
 import { User } from '../user/User.model';
 import shortid from 'shortid';
 import { userStreamKeyNotGeneratedError } from '../errors/errors.constants';
+import { RTMPServerConfig } from '../../../config/RTMP-server.config';
 
 @Controller('/streams')
 export class StreamController extends BaseController {
     constructor(
         @inject(TYPES.UserService) private userService: UserService,
-        @inject(TYPES.AuthService) private authService: AuthService
     ) {
         super();
     }
 
     @Get('/stream-key', [new AuthRequiredMiddleware()])
     async getStreamKey(req: Request, res: Response) {
-        res.send({ stream_key: req.user?.streamKey });
+        res.send({ streamKey: req.user?.streamKey });
     }
 
     @Post('/stream-key', [new AuthRequiredMiddleware()])
@@ -62,15 +62,20 @@ export class StreamController extends BaseController {
             return res.send();
         }
         let streams = JSON.parse(req.query.streams as string);
-        let stream_keys = [];
+        let streamKeys = [];
         for (let stream in streams) {
             if (!streams.hasOwnProperty(stream)) continue;
-            stream_keys.push({ streamKey: stream });
+            streamKeys.push({ streamKey: stream });
         }
 
-        const users = await User.find({ $or: stream_keys });
+        const users = await User.find({ $or: streamKeys });
         if (!users) return res.send();
 
         res.send(users);
+    }
+
+    @Get('/config')
+    async streamsConfig(req: Request, res: Response) {
+        res.send(RTMPServerConfig)
     }
 }

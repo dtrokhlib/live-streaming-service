@@ -1,11 +1,12 @@
 .Auth {
     width: 100%;
     max-width: 500px;
-    min-width: 400px;
+    min-width: 300px;
     height: auto;
     background-color: #a5d6ff;
     padding: 25px 20px;
     border-radius: 15px;
+    margin: auto;
     color: #051d4d;
     border: 2px solid #271052;
 }

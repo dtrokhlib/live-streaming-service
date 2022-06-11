@@ -20,7 +20,7 @@ export class RTMPServerService {
         this.nodeMediaServer.on(
             'prePublish',
             async (id: any, StreamPath: any, args: any) => {
-                let stream_key = this.getStreamKeyFromStreamPath(StreamPath);
+                let streamKey = this.getStreamKeyFromStreamPath(StreamPath);
                 console.log(
                     '[NodeEvent on prePublish]',
                     `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(

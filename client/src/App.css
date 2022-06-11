@@ -2,15 +2,22 @@
 @import '~video.js/dist/video-js.css';
 @import '~bootstrap/dist/css/bootstrap.css';
 
-html,
-body {
+
+
+div.App {
     background-color: #161b22;
     font-family: Noto Sans, sans-serif;
     color: #c9d1d9;
     height: 100vh;
+    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+body > div {
+    align-self: center;
 }
 
 .navbar-nav li {

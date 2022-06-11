@@ -10,7 +10,7 @@ export default class Settings extends React.Component {
         super(props);
 
         this.state = {
-            stream_key: '',
+            streamKey: '',
         };
 
         this.generateStreamKey = this.generateStreamKey.bind(this);
@@ -25,14 +25,14 @@ export default class Settings extends React.Component {
             'http://localhost:5050/streams/stream-key'
         );
         this.setState({
-            stream_key: res.data.stream_key,
+            streamKey: res.data.streamKey,
         });
     }
 
     async getStreamKey() {
         const res = await axios.get('http://localhost:5050/streams/stream-key');
         this.setState({
-            stream_key: res.data.stream_key,
+            streamKey: res.data.streamKey,
         });
     }
 
@@ -45,7 +45,7 @@ export default class Settings extends React.Component {
 
                     <div className='col-xs-12 col-sm-12 col-md-8 col-lg-6'>
                         <div className='row'>
-                            <h5>{this.state.stream_key}</h5>
+                            <h5>{this.state.streamKey}</h5>
                         </div>
                         <div className='row'>
                             <button
