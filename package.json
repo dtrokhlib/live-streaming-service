@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "cd ./infra && docker compose -d && cd ../client && npm i && npm run build && cp -a ./build/. ../server/public && cd ../server && npm i && npm run start"
+        "start": "cd ./infra && docker-compose up -d && cd ../client && npm i && npm run build && cd ../server && npm i && npm run build && cp -R ../client/build/. ./dist/server/public && cp -R .env ./dist/server && npm run start"
     },
     "keywords": [],
     "author": "",
